@@ -6,9 +6,10 @@ RUN apt install vim -y
 RUN apt install curl -y
 RUN mkdir -p /etc/nginx/ssl
 RUN apt install openssl -y
-RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt \
--keyout /etc/nginx/ssl/inception.key \
--subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=login.42.fr/UID=login"
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+-keyout /etc/nginx/ssl/nginx-selfsigned.key \
+-out /etc/nginx/ssl/nginx-selfsigned.crt \
+-subj "/C=PT/L=Lisbon/O=42/OU=student/CN=lleiria-.42.fr"
 RUN mkdir -p /var/run/nginx
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
