@@ -8,3 +8,60 @@ services:
     ports:
       - 443:443
     restart: on-failure
+    volumes:
+      -wordvol:/var/www/html
+    networks:
+      - Inception_net
+    depends_on:
+      - wordpress
+
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
+    env_file:
+      - .env
+    restart: on-failure
+    volumes:
+      - mariavol:/var/lib/mysql
+    networks:
+      - Inception_net
+    healthcheck:
+      test:  [ "CMD", "mysqladmin", "ping", "--silent"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    env_file:
+      - .env
+    restart: on-failure
+    volumes:
+      - wordvol:/var/www/html
+    networks:
+      - Inception_net
+    depends_on:
+      - mariadb:
+        condition: service_healthy
+  
+  volumes:
+    mariavol:
+      name: mariavol
+      driver_opts:
+        type: none
+        device: /home/lleiria-/data/database
+        o: bind
+    wordvol:
+      name: wordvol
+      driver_opts:
+        type: none
+        device: /home/lleiria-/data/wordpress
+        o: bind
+
+  networks:
+    Inception_net:
+      name: Inception
