@@ -1,14 +1,14 @@
-FROM debian:buster
+FROM debian:oldstable-slim
 
 RUN apt update -y
-RUN apt upgrade -y
-RUN apt-get install mariadb-server -y
+# RUN apt upgrade -y
+RUN apt install mariadb-server -y
 RUN mysql_install_db
 
-COPY ./tools/script.sh /home/
+COPY ./tools/script.sh /home/mdb-script.sh
 
-RUN chmod +x /home/script.sh
+RUN chmod +x /home/mdb-script.sh
 
 EXPOSE 3306
 
-ENTRYPOINT [ "/home/script.sh" ]
+ENTRYPOINT [ "/home/mdb-script.sh" ]
